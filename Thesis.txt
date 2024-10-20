@@ -2,28 +2,57 @@ Development and Deployment of a Simple Ecommerce Website
 Kevin Zoltán Barta
  
 Contents
-1	Introduction	3
-1.1	Short Description of the Task	3
-1.2	Definition of Ecommerce	3
-1.3	History of Ecommerce	3
-1.3.1	Early Attempts	3
-1.3.2	New Generation of Ecommerce	4
-2	Literature Review	5
-2.1	UI Best Practices	5
-2.1.1	Takeaways from “Don’t Make Me Think”	5
-2.2	Cloud Deployment and Security	7
-2.2.1	Security Concerns	7
-2.2.2	Common Security Threats	8
-2.2.3	Mitigation of The Security Risks	10
-2.2.4	Cloud Storage	11
-2.2.5	Data Security in the Cloud	12
-2.2.6	Data Privacy in the Cloud	14
-2.3	Analyzing Existing Ecommerce Platforms	14
-2.3.1	Alibaba	15
-2.3.2	Amazon	16
-2.3.3	eBay	17
-2.3.4	WooCommerce	17
-Bibliography	19
+1	Introduction	4
+1.1	Short Description of the Task	4
+1.2	Definition of Ecommerce	4
+1.3	History of Ecommerce	4
+1.3.1	Early Attempts	4
+1.3.2	New Generation of Ecommerce	5
+2	Literature Review	6
+2.1	UI Best Practices	6
+2.1.1	Takeaways from “Don’t Make Me Think”	6
+2.1.2	Takeaways from “Refactoring UI”	8
+2.2	Cloud Deployment and Security	10
+2.2.1	Security Concerns	10
+2.2.2	Common Security Threats	11
+2.2.3	Mitigation of The Security Risks	13
+2.2.4	Cloud Storage	14
+2.2.5	Data Security in the Cloud	15
+2.2.6	Data Privacy in the Cloud	17
+2.3	Analyzing Existing Ecommerce Platforms	18
+2.3.1	Alibaba	18
+2.3.2	Amazon	19
+2.3.3	eBay	20
+2.3.4	WooCommerce	21
+3	Evaluation Criteria	22
+3.1	Nonfunctional Requirements	22
+3.1.1	Performance	22
+3.1.2	Security	22
+3.1.3	Usability	22
+3.1.4	Availability	22
+3.1.5	Extensibility	23
+3.2	Functional Requirements	23
+3.2.1	User Registration and Authentication	23
+3.2.2	Product Catalog	23
+3.2.3	Product Page	23
+3.2.4	Cart	23
+3.2.5	Checkout	23
+3.2.6	Search Engine	23
+3.2.7	Order Tracking	23
+3.2.8	Admin Page	24
+4	System Design	25
+4.1	Frontend Website	25
+4.1.1	Chosen Frontend Technologies	25
+4.1.2	Wireframes	25
+4.2	Database	30
+4.2.1	Chosen DBMS	30
+4.2.2	Schema	30
+5	Implementation	33
+5.1	Frontend Website	33
+5.2	Database	34
+5.2.1	Password Security	34
+5.2.2	Product ID Obfuscation	34
+Bibliography	36
 
  
 Introduction 
@@ -185,33 +214,91 @@ WooCommerce
 WooCommerce (along with Shopify) is one of the most popular ecommerce platforms for building an online store. It is actually a plugin for WordPress, with many integrated tools, developed by Automattic, the same company that owns and operates WordPress. Its popularity can be illustrated by the fact that it has more than 5 million active installations. [26] WooCommerce attracts people with more expertise, as opposed to Shopify, due to its steeper learning curve. The reason why the focus is on WooCommerce instead of Shopify is due to its open-source, highly customizable nature, and the fact that it can be self-hosted, [27] unlike Shopify. [28]
 While WooCommerce can be self-hosted, they do offer hosting solutions, which is one source of their income. Another source is the WooCommerce marketplace, where custom themes and extensions are sold. For shipping, WooCommerce offers a free extension with no fees, with basic functionalities, however they also offer more advanced paid shipping extensions developed by themselves. They also offer their own payment gateway, which has no subscription fee but a fee must be paid after every transaction. [29]
 From a security perspective, WooCommerce warns that installing third-party extensions and themes can introduce new vulnerabilities. There are also security related extensions, which can take care of automated backups, provide brute-force attack protection, malware and vulnerability scanning, detailed logging and anti-spam technologies. An SSL certificate is also a basic but inevitable requirement of a secure site, which typically hosting platforms provide for free. WooCommerce also offer software development support for their customers at a paid rate. They also provide a list of trusted developers and agencies that can help with development (possibly another source of their income via commissions). [29] 
+Evaluation Criteria
+Before creating a detailed specification, it is important to set the evaluation criteria of the website, that is technical criteria that the website must follow. These criteria consist of functional and nonfunctional requirements.	
+Nonfunctional Requirements
+Nonfunctional requirements are the description of properties or characteristics that the system must display or adhere to. [30]
+Performance
+With today’s processing power performance is only a major issue when too many concurrent processes are running or the time complexity of the running algorithm is too high. For this reason, the main performance requirement of the website is to use algorithms with low time complexity wherever it is possible and avoid using too many microservices. Optimization from time to time is also key to reaching higher performance.
+Security
+As the literature review concludes, security is paramount for an ecommerce site. Dependencies must be kept up-to-date to patch the known vulnerabilities. User entered data must always be handled with extra caution and as a potential threat. Sensitive data such as password must be protected appropriately, for example by hashing them or even adding salt to them first, to prevent the possibility of cracking the hashes of common passwords.
+Usability
+The interface should be intuitive and easy to use. Later on, this could be evaluated by conducting a usability test. Usability should come before design as a priority. Navigation throughout the website should be self-explanatory, returning to a previously visited page should not cause any trouble for the user. The website should be at least somewhat responsive, however, a fully-fledged mobile interface is not a requirement.
+Availability
+Since we assume that the website is targeting consumers all around the world, it is important to guarantee high availability. For this reason, the website should be served from a reliable cloud platform. As an example, Amazon Compute’s SLA guarantees 99.99% uptime (which means a maximum downtime around less than 5 minutes per month) for EC2 instances deployed in multiple availability zones in the same region and pays back a certain percentage in service credits if they fail to adhere to that. [31]
+Extensibility
+The backend should provide an API with endpoints for user and admin actions. Wherever possible a modular approach is preferred. The whole system needs to be designed with future extensibility in mind.
+Functional Requirements
+Functional requirements are the description of behaviors that the system must follow under certain conditions. [30]
+User Registration and Authentication
+Users should have the ability to sign up and login to their accounts. In case they forgot their password, they should be able to reset it, by receiving an email with a special link where they can set a new password.
+Product Catalog
+Products should be categorized and be displayed in the product catalog. Promotions from the product catalog are visible on the home page, while the product catalog can be browsed by either opening the page of a category or performing a search using a keyword.
+Product Page
+The product page should display information about the product, such as title, description, price, number of items left in stock and quantity to order with an option for the users to put it in their cart.
+Cart
+The cart should display the products and the quantity of them that the users put in there. Here, the users have the ability to check out and place their order.
+Checkout
+While placing the order, the user should be prompted for their personal information. Once the order is placed, the users should get a confirmation email about their order.
+Search Engine
+At least a very minimalistic search engine should be available that is capable of carrying out a search among the product titles and display the results in a formatted manner.
+Order Tracking
+The latest status (and the previous statuses along with their timestamps) of an order should be trackable through the user’s profile.
+Admin Page
+For the sake of simpler product and order management, an admin page should be created. This page facilitates all the actions that would otherwise be done directly in the database. The admin page should enable basic CRUD operations on the tables in the database, for example adding, deleting and updating products, deleting users and orders and updating the statuses of orders. 
 System Design
 Frontend Website
 As suggested by many, I decided to start with the frontend part of the website. I came to this decision for several reasons, namely to discover the functionalities I intend to incorporate in the website, to have a visual idea of what I plan to achieve and also due to the sheer depth of frontend development, I realized this part might take the longest to develop.
 Chosen Frontend Technologies
 Choosing the right technology for a website can be a challenging undertaking. The vast number of technologies competing each other makes it especially difficult for the developers to settle for one. I decided to approach the question more generally than gradually get more specific.
-There are many frontend frameworks out there in the market, such as React, Vue.js, Next.js, Svelte, etc. According to StackOverflow trends, React is the most popular framework, followed by Angular and Next.js. [30] Google Trends outlines similar statistics. [31] Since I have experience in Angular, I chose this framework for my website. The strongly typed nature of TypeScript helps with building more stable apps, with the slight disadvantage of the need for compilation.
+There are many frontend frameworks out there in the market, such as React, Vue.js, Next.js, Svelte, etc. According to StackOverflow trends, React is the most popular framework, followed by Angular and Next.js. [32] Google Trends outlines similar statistics. [33] Since I have experience in Angular, I chose this framework for my website. The strongly typed nature of TypeScript helps with building more stable apps, with the slight disadvantage of the need for compilation.
 Once I selected the framework, I looked for a UI component library. After some research, I narrowed down the potentials to 3 libraries: PrimeNG, Angular Material and Taiga UI. Due to my work, I have experience with Angular Material, however I am not too satisfied with its appearance, since it tends to give the website looks akin to Google products. Taiga UI seemed quite promising; however, it is still in an earlier stage of its development and has a smaller userbase, which also means less documentation. With PrimeNG, I had some experience, thanks to personal projects and also work. PrimeNG offers the widest range of components and although there are reports of occasional bugs with some components, I decided to choose this framework, since it is easy to use and visually appealing.
 For styling, I contemplated using Tailwind, since it allows rapid development speed, however it also has its own learning curve and I figured that without a strong CSS background, Tailwind may actually cause more problems than it solves. For this reason, I decided to proceed with the project using pure CSS and potentially PrimeFlex, since it is a utility library optimized for PrimeNG.
 Wireframes
 Once settled with the frontend technologies, I decided to create a blueprint of the website I was imagining. Wireframes seemed perfect for this purpose. I decided to use Figma, since I had experience with it from before and it is an easy-to-use tool for designing. I created the design of different pages, namely the home page, the page of a subcategory, the page of a product and the page of the items added to the cart. Some constant elements include the header and the footer, which are displayed on all pages.
  
-Figure 3.1 - Home page
-Figure 3.1 - Home page depicts the home page of the website, which includes some promotions, the header and the footer. The header includes the site id (the logo of the website with a link to the home page), a multi-level dropdown for selecting the appropriate category and subcategory, a search field for looking up products, sign in and register buttons and the user’s cart. The footer includes the most typical links for an online store, such as contact, the about page, shipping information and a page for handling complaints.
+Figure 4.1 - Home page
+Figure 4.1 - Home page depicts the home page of the website, which includes some promotions, the header and the footer. The header includes the site id (the logo of the website with a link to the home page), a multi-level dropdown for selecting the appropriate category and subcategory, a search field for looking up products, sign in and register buttons and the user’s cart. The footer includes the most typical links for an online store, such as contact, the about page, shipping information and a page for handling complaints.
   
-Figure 3.2 - Subcategory Page
-Figure 3.2 - Subcategory Page includes breadcrumbs, that show which category and subcategory the user selected, product cards with the names and the prices of the products on them.
+Figure 4.2 - Subcategory Page
+Figure 4.2 - Subcategory Page includes breadcrumbs, that show which category and subcategory the user selected, product cards with the names and the prices of the products on them.
  
-Figure 3.3 – Product Page
-Figure 3.3 – Product Page shows images of the product, along with a photo carousel, name and description of the product, the price of it, the quantity to order (which defaults to 1) and a button to add the required quantity to the cart. It also includes the breadcrumbs that show the category and the subcategory of the product.
+Figure 4.3 – Product Page
+Figure 4.3 – Product Page shows images of the product, along with a photo carousel, name and description of the product, the price of it, the quantity to order (which defaults to 1) and a button to add the required quantity to the cart. It also includes the breadcrumbs that show the category and the subcategory of the product.
  
-Figure 3.4 - Cart Page
-Figure 3.4 - Cart Page shows the items that the user has added to the cart. A thumbnail is shown of the item, along with its name, a short description, the price and the quantity the user specified and a proceed to checkout button, which once clicked takes the user to the page where they are prompted for their personal information and shipping address. 
+Figure 4.4 - Cart Page
+Figure 4.4 - Cart Page shows the items that the user has added to the cart. A thumbnail is shown of the item, along with its name, a short description, the price and the quantity the user specified and a proceed to checkout button, which once clicked takes the user to the page where they are prompted for their personal information and shipping address. 
+Database
+Chosen DBMS
+In order to store persistent data efficiently a database is inevitable for an application. Since I am not dealing with large volumes of unorganized data, I decided to use a relational database. The next step was selecting the database management system (DBMS). In the past, I had done research on different database management systems and at that time came to the conclusion that PostgeSQL and MySQL are the best choices for most use-cases. These two systems were my chosen options, thanks to the fact that they are free and open-source, scalable, they boast a really large user base and both systems rank high in performance benchmarks. Considering that there is no huge gain from choosing one over the other, I made my decision based on my own observation of tendencies, namely that PostgreSQL is gaining traction over MySQL.
+Schema
+Once the DBMS has been chosen the next step was to create a database schema. I tried to determine what possible entities may be needed for an ecommerce website and came up with an initial schema. Unsure about my schema, I decided to revisit it once I already designed the initial state of the frontend. I decided to wait, to gain first-hand insights about possible missing entities or unexpected constraints that I might have failed to consider. Waiting has proven to be a good decision, because in the end I came up with a more refined schema, with a lot of considerations.
+ 
+Figure 4.5 ERD of the initial state of the schema
+
+ 
+Figure 4.6 ERD of the improved version of the schema
+As seen in Figure 4.5 ERD of the initial state of the schema, I used title case, which I later regretted, since I find that the case-insensitive nature of SQL renders it useless, so I replaced it with snake case, which is more appropriate for table and field names in my opinion. In the newer schema, Figure 4.6 ERD of the improved version of the schema, I also managed to eliminate the SubcategoryAndProduct connector table, since I realized I should make one product belong to only one subcategory, to keep the site simple (this becomes obvious from looking at the wireframes, since the breadcrumbs on the product page points to the appropriate subcategory of the product, which is only possible to implement, if a product only belongs to one category). I also paid attention to more subtle details, e.g., not using reserved words such as order and user as the names of the tables. 
+
+
+ 
 Implementation
 Frontend Website
 I started the implementation of the frontend website by setting up the appropriate environment. I reviewed whether I had the necessary programs installed, such as Angular CLI version, Node.js and the npm package of PrimeNG. Initially I focused on my biggest weakness, which was CSS, by practicing it independently of the project and later on gradually building components within the project.
 Basic responsiveness (responding to zoom and different screen sizes) was an important aspect in development process, however my initial approach to adjust the size of the components based on the screen with and height, later on using viewport, proved to be inaccurate. Later on, I realized I could use rem as a unit of measurement, which sets the size of the components relative to the root font size. This resulted in significant improvement in responsiveness in case of zooming albeit this alone does not make the website mobile-friendly. Since building a working website first was more urgent, I decided to lower the priority of making it mobile friendly and focus on the development of the main functionalities of the website and only once that is finished, then make the website responsive. Typically, it is recommended to take a mobile-first approach and develop the mobile version of the website first (since it is easier to create a desktop version from there, unlike the other way around), however in my case the main focus was on the desktop version.
-Unsurprisingly, due to the fact that I did a lot of trial and error, the folder structure got cluttered quickly, which I decided not to bother, until I reach a stable state of the website. Once I designed the subsections that appear on every page (the header and the footer), I decided to create a systema for my components. I decided to hierarchically and logically group the components together, e.g., the components used by the navigation bar would appear under its folder (unless it is used within other components too, in which case it should be placed in a folder designated for shared components). Although I was not sure whether I can settle for this structure for the entire duration of the project, having organized the folder structure significantly simplified overviewing the project. 
+Unsurprisingly, due to the fact that I did a lot of trial and error, the folder structure got cluttered quickly, which I decided not to bother, until I reach a stable state of the website. Once I designed the subsections that appear on every page (the header and the footer), I decided to create a systema for my components. I decided to hierarchically and logically group the components together, e.g., the components used by the navigation bar would appear under its folder (unless it is used within other components too, in which case it should be placed in a folder designated for shared components). Although I was not sure whether I can settle for this structure for the entire duration of the project, having organized the folder structure significantly simplified overviewing the project.
+ 
+Database
+As I mentioned previously PostgreSQL was the database of my choice.
+An important question to consider was the ID to be used as the primary key, either a sequential ID (INT/BIGINT) or a UUID. The biggest downside of UUID is performance, which is partly due to the fact that UUIDs are not sequential. This issue was addressed in UUIDv7, however that version of UUID is not supported by the latest version of Postgres (version 17) as of October 2024.
+One of the biggest advantages of the sequential integer IDs is readability and the fact that they are much shorter and easier to remember, which helps with testing and debugging. UUIDs are more typically meant to be used in NoSQL databases, where larger chunks of data are grouped together in objects. For these reasons, I decided to settle for BIGINT as my primary key type.
+Password Security
+Passwords should never be stored in the database. Instead, a cryptographic hashing function should be applied to the password the user enters and the digest should be stored in the database. I decided to use SHA256, since other common hashing algorithms such as MD5 and SHA-1 are both proven to be affected by collision attacks.
+To enhance security, I decided to generate salt before the hash calculation, append the salt to the password and calculate the digest after that. Following this, the hash and the salt would both be stored in the record of the customer. I incorporated this in a function called  create_customer, which is responsible for creating a new customer record. A check_password function has also been created, which can authenticate the user based on their email and entered password. This is carried out the same way as the password generation, salt is appended at the end of the password, the whole text is hashed and compared with the actual hash.
+Product ID Obfuscation
+Following the principle of security through obscurity the ID (for example a product id) should not give away details about the database (e.g., the number of products stored). For this reason, if a sequential ID is used, preferably that should not be displayed in the URL of the frontend. The same problem would not arise with UUID (especially before version 7) since it does not retain sequence information.
+To solve this problem, I decided to introduce two new fields in the product table. The first field is called public_id, the public identifier of the product, a 12 character long randomly generated base32 text. The generation of this id is handled by a custom user-defined function called generate_base_32. This function attempts to generate a base32 ID of a given length (by default 12) until it successfully finds a unique ID. Using a simplified form of the birthday problem, we can approximate that it would take about √M products, where M is the number of possibilities, before we face a 50% chance of collision during ID generation. Plugging in 3212 for M, we get √(32^12 )=1073741824, which means it would take more than a billion products to reach that point. This is an acceptable compromise between trying to keep the length of the ID short while also ensuring that the system is capable of handling larger volumes of products.
+
  
 Bibliography
 
@@ -244,7 +331,9 @@ Bibliography
 [27] 	S. Trovato and R. Watts, "WooCommerce Vs. Shopify (2024 Comparison)," Forbes, 2024. [Online]. Available: https://www.forbes.com/advisor/business/software/woocommerce-vs-shopify/. [Accessed 8 May 2024].
 [28] 	T. Wingfield, "Can I Host Shopify On My Own Server?," Kanteneo, [Online]. Available: https://kanteneo.com/blog/can-i-host-shopify-on-my-own-server/. [Accessed 8 May 2024].
 [29] 	K. Marr, "WooCommerce pricing: How much does it cost to run a store?," WooCommerce, [Online]. Available: https://woocommerce.com/posts/woocommerce-pricing/. [Accessed 8 May 2024].
-[30] 	StackOverflow, "StackOverflow Trends - Web Frameworks," StackOverflow, [Online]. Available: https://insights.stackoverflow.com/trends?tags=reactjs%2Cvue.js%2Cangular%2Csvelte%2Cangularjs%2Cvuejs3%2Cnext.js. [Accessed 26 6 2024].
-[31] 	"Google Trends - Web Frameworks," Google, [Online]. Available: https://trends.google.com/trends/explore?date=2012-01-01%202024-06-26&q=%2Fm%2F012l1vxv,%2Fg%2F11c6w0ddw9,%2Fg%2F11h4q9rcf3,%2Fg%2F11bc69_ykv,Svelte&hl=en. [Accessed 26 6 2024].
+[30] 	K. Wiegers and J. Beatty, Software Requirements. 
+[31] 	AWS, "Amazon Compute Service Level Agreement," 25 5 2022. [Online]. Available: https://aws.amazon.com/compute/sla/. [Accessed 19 9 2024].
+[32] 	StackOverflow, "StackOverflow Trends - Web Frameworks," StackOverflow, [Online]. Available: https://insights.stackoverflow.com/trends?tags=reactjs%2Cvue.js%2Cangular%2Csvelte%2Cangularjs%2Cvuejs3%2Cnext.js. [Accessed 26 6 2024].
+[33] 	"Google Trends - Web Frameworks," Google, [Online]. Available: https://trends.google.com/trends/explore?date=2012-01-01%202024-06-26&q=%2Fm%2F012l1vxv,%2Fg%2F11c6w0ddw9,%2Fg%2F11h4q9rcf3,%2Fg%2F11bc69_ykv,Svelte&hl=en. [Accessed 26 6 2024].
 
 
