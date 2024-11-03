@@ -37,8 +37,8 @@ Contents
 3.2.3	Product Page	23
 3.2.4	Cart	23
 3.2.5	Checkout	23
-3.2.6	Search Engine	23
-3.2.7	Order Tracking	23
+3.2.6	Search Engine	24
+3.2.7	Order Tracking	24
 3.2.8	Admin Page	24
 4	System Design	25
 4.1	Frontend Website	25
@@ -47,11 +47,14 @@ Contents
 4.2	Database	30
 4.2.1	Chosen DBMS	30
 4.2.2	Schema	30
-5	Implementation	33
-5.1	Frontend Website	33
-5.2	Database	34
-5.2.1	Password Security	34
-5.2.2	Product ID Obfuscation	34
+5	Implementation	32
+5.1	Frontend Website	32
+5.2	Database	33
+5.2.1	Primary Key	33
+5.2.2	Permission Management	33
+5.2.3	Password Security	33
+5.2.4	Product ID Obfuscation	34
+5.2.5	Automation and Image Management	34
 Bibliography	36
 
  
@@ -222,30 +225,31 @@ Performance
 With today’s processing power performance is only a major issue when too many concurrent processes are running or the time complexity of the running algorithm is too high. For this reason, the main performance requirement of the website is to use algorithms with low time complexity wherever it is possible and avoid using too many microservices. Optimization from time to time is also key to reaching higher performance.
 Security
 As the literature review concludes, security is paramount for an ecommerce site. Dependencies must be kept up-to-date to patch the known vulnerabilities. User entered data must always be handled with extra caution and as a potential threat. Sensitive data such as password must be protected appropriately, for example by hashing them or even adding salt to them first, to prevent the possibility of cracking the hashes of common passwords.
+The principle of least privilege must apply and wherever it is feasible, the components should be kept within a private network. Appropriate password requirements must be enforced, to prevent brute-force attacks. The user must be authorized every time they take an action.
 Usability
-The interface should be intuitive and easy to use. Later on, this could be evaluated by conducting a usability test. Usability should come before design as a priority. Navigation throughout the website should be self-explanatory, returning to a previously visited page should not cause any trouble for the user. The website should be at least somewhat responsive, however, a fully-fledged mobile interface is not a requirement.
+The interface should be intuitive and easy to use. Later on, this could be evaluated by conducting a usability test. Usability should come before design as a priority. Navigation throughout the website should be self-explanatory, returning to a previously visited page should not cause any trouble for the user. The website should be at least somewhat responsive; however, a fully-fledged mobile interface is not a requirement.
 Availability
-Since we assume that the website is targeting consumers all around the world, it is important to guarantee high availability. For this reason, the website should be served from a reliable cloud platform. As an example, Amazon Compute’s SLA guarantees 99.99% uptime (which means a maximum downtime around less than 5 minutes per month) for EC2 instances deployed in multiple availability zones in the same region and pays back a certain percentage in service credits if they fail to adhere to that. [31]
+Since we assume that the website is targeting consumers all around the world, it is important to guarantee high availability. For this reason, the website should be served from a reliable cloud platform. As an example, Amazon Compute’s SLA guarantees 99.99% uptime (which means a maximum downtime around less than 5 minutes per month) for EC2 instances deployed in multiple availability zones in the same region and pays back a certain percentage in service credits if they fail to adhere to that. [31] Using a cloud platform like AWS will enable easy scalability, both vertically and horizontally.
 Extensibility
 The backend should provide an API with endpoints for user and admin actions. Wherever possible a modular approach is preferred. The whole system needs to be designed with future extensibility in mind.
 Functional Requirements
 Functional requirements are the description of behaviors that the system must follow under certain conditions. [30]
 User Registration and Authentication
-Users should have the ability to sign up and login to their accounts. In case they forgot their password, they should be able to reset it, by receiving an email with a special link where they can set a new password.
+Users should have the ability to sign up and login to their accounts. In case they forgot their password, they should be able to reset it, by receiving an email with a special link where they can set a new password. Once the user is logged in, they need to receive a token that authorizes them to take certain actions (e.g., modifying their data or placing an order).
 Product Catalog
-Products should be categorized and be displayed in the product catalog. Promotions from the product catalog are visible on the home page, while the product catalog can be browsed by either opening the page of a category or performing a search using a keyword.
+Products should be categorized and be displayed in the product catalog. Promotions from the product catalog are visible on the home page, while the product catalog can be browsed by either opening the page of a category or performing a search using a keyword. The product cards should provide some basic information about the product, such as their name and a thumbnail.
 Product Page
-The product page should display information about the product, such as title, description, price, number of items left in stock and quantity to order with an option for the users to put it in their cart.
+The product page should display information about the product, such as title, description, price, number of items left in stock and quantity to order with an option for the users to put it in their cart. The page should prevent the user from putting more of the product in their cart than what is available in stock.
 Cart
-The cart should display the products and the quantity of them that the users put in there. Here, the users have the ability to check out and place their order.
+The cart should display the products and the quantity of them that the users put in there. Here, the users have the ability to check out and place their order. The user should be able to easily discard items from the list that they no longer want to buy.
 Checkout
-While placing the order, the user should be prompted for their personal information. Once the order is placed, the users should get a confirmation email about their order.
+While placing the order, the user should be prompted for their personal information. Once the order is placed, the user should get a confirmation email about their order.
 Search Engine
-At least a very minimalistic search engine should be available that is capable of carrying out a search among the product titles and display the results in a formatted manner.
+At least a very minimalistic search engine should be available that is capable of carrying out a search among the product titles and display the results in a formatted manner. The search engine should also look for the keyword within the description but the results should be sorted by relevance (first the products where the keyword was found in the titles, then those where it was found in the description).
 Order Tracking
-The latest status (and the previous statuses along with their timestamps) of an order should be trackable through the user’s profile.
+The latest status of the order should be summarized and displayed (e.g., processed, shipped, delivered, etc.). The different statuses (e.g., statuses sent by the courier) along with their timestamps should be trackable on the page of the order. 
 Admin Page
-For the sake of simpler product and order management, an admin page should be created. This page facilitates all the actions that would otherwise be done directly in the database. The admin page should enable basic CRUD operations on the tables in the database, for example adding, deleting and updating products, deleting users and orders and updating the statuses of orders. 
+For the sake of simpler product and order management, an admin page could be created. This page facilitates all the actions that would otherwise be done directly in the database. The admin page should have access to basic CRUD operations on the tables in the database, for example adding, deleting and updating products, deleting users and orders and updating the statuses of orders. 
 System Design
 Frontend Website
 As suggested by many, I decided to start with the frontend part of the website. I came to this decision for several reasons, namely to discover the functionalities I intend to incorporate in the website, to have a visual idea of what I plan to achieve and also due to the sheer depth of frontend development, I realized this part might take the longest to develop.
@@ -278,8 +282,7 @@ Figure 4.5 ERD of the initial state of the schema
 
  
 Figure 4.6 ERD of the improved version of the schema
-As seen in Figure 4.5 ERD of the initial state of the schema, I used title case, which I later regretted, since I find that the case-insensitive nature of SQL renders it useless, so I replaced it with snake case, which is more appropriate for table and field names in my opinion. In the newer schema, Figure 4.6 ERD of the improved version of the schema, I also managed to eliminate the SubcategoryAndProduct connector table, since I realized I should make one product belong to only one subcategory, to keep the site simple (this becomes obvious from looking at the wireframes, since the breadcrumbs on the product page points to the appropriate subcategory of the product, which is only possible to implement, if a product only belongs to one category). I also paid attention to more subtle details, e.g., not using reserved words such as order and user as the names of the tables. 
-
+As seen in Figure 4.5 ERD of the initial state of the schema, I used title case, which I later regretted, since I find that the case-insensitive nature of SQL renders it useless, so I replaced it with snake case, which is more appropriate for table and field names in my opinion. In the newer schema, Figure 4.6 ERD of the improved version of the schema, I also managed to eliminate the SubcategoryAndProduct connector table, since I realized I should make one product belong to only one subcategory, to keep the site simple (this becomes obvious from looking at the wireframes, since the breadcrumbs on the product page points to the appropriate subcategory of the product, which is only possible to implement, if a product only belongs to one category). An Image table has been connected to the Product table, so that images can be associated with the products. I also paid attention to more subtle details, e.g., not using reserved words such as order and user as the names of the tables. 
 
  
 Implementation
@@ -290,14 +293,20 @@ Unsurprisingly, due to the fact that I did a lot of trial and error, the folder 
  
 Database
 As I mentioned previously PostgreSQL was the database of my choice.
+Primary Key
 An important question to consider was the ID to be used as the primary key, either a sequential ID (INT/BIGINT) or a UUID. The biggest downside of UUID is performance, which is partly due to the fact that UUIDs are not sequential. This issue was addressed in UUIDv7, however that version of UUID is not supported by the latest version of Postgres (version 17) as of October 2024.
 One of the biggest advantages of the sequential integer IDs is readability and the fact that they are much shorter and easier to remember, which helps with testing and debugging. UUIDs are more typically meant to be used in NoSQL databases, where larger chunks of data are grouped together in objects. For these reasons, I decided to settle for BIGINT as my primary key type.
+Permission Management
+Initially I used the superuser (postgres) to create and manage the database. Later on, I revisited this and created a user (shopadmin) with CREATE rights. Then as the shopadmin user created the database (ecommerce) and everything (tables, sequences and functions) within the database. This way, since the shopadmin user is the owner of all the entities, it has access to everything within the database, but nothing outside of it.
 Password Security
 Passwords should never be stored in the database. Instead, a cryptographic hashing function should be applied to the password the user enters and the digest should be stored in the database. I decided to use SHA256, since other common hashing algorithms such as MD5 and SHA-1 are both proven to be affected by collision attacks.
-To enhance security, I decided to generate salt before the hash calculation, append the salt to the password and calculate the digest after that. Following this, the hash and the salt would both be stored in the record of the customer. I incorporated this in a function called  create_customer, which is responsible for creating a new customer record. A check_password function has also been created, which can authenticate the user based on their email and entered password. This is carried out the same way as the password generation, salt is appended at the end of the password, the whole text is hashed and compared with the actual hash.
+To enhance security, I decided to generate salt before the hash calculation, append the salt to the password and calculate the digest after that. Following this, the hash and the salt would both be stored in the record of the customer. I incorporated this in a function called create_customer, which is responsible for creating a new customer record. A check_password function has also been created, which can authenticate the user based on their email and entered password. This is carried out the same way as the password generation, salt is appended at the end of the password, the whole text is hashed and compared with the actual hash.
 Product ID Obfuscation
 Following the principle of security through obscurity the ID (for example a product id) should not give away details about the database (e.g., the number of products stored). For this reason, if a sequential ID is used, preferably that should not be displayed in the URL of the frontend. The same problem would not arise with UUID (especially before version 7) since it does not retain sequence information.
 To solve this problem, I decided to introduce two new fields in the product table. The first field is called public_id, the public identifier of the product, a 12 character long randomly generated base32 text. The generation of this id is handled by a custom user-defined function called generate_base_32. This function attempts to generate a base32 ID of a given length (by default 12) until it successfully finds a unique ID. Using a simplified form of the birthday problem, we can approximate that it would take about √M products, where M is the number of possibilities, before we face a 50% chance of collision during ID generation. Plugging in 3212 for M, we get √(32^12 )=1073741824, which means it would take more than a billion products to reach that point. This is an acceptable compromise between trying to keep the length of the ID short while also ensuring that the system is capable of handling larger volumes of products.
+Automation and Image Management
+During development, the database may have to be recreated numerous times. For this reason, I decided to automate this process. Initially I did this manually running sequentially multiple SQL files, to create the shopadmin user, the ecommerce table as the shopadmin user and the necessary tables/functions, then populate those tables. As the complexity grew, I realized I should further automate this process. I created a simple CMD script that can easily be rewritten in Bash too if needed, using the psql command, to run the necessary scripts sequentially. Previously I used psql commands, such as \c within the SQL scripts, however since this is not allowed when loading SQL scripts using the psql command, I had to add additional psql commands for changing the user or the database. In the SQL files I also made use of prepared statements and functions to further help with the population of the tables (e.g., in case of customer table, since the salt and the password are connected, the users must be created through a function).
+After the simpler part of the automation has been done, I decided to populate the image table by uploading images from a specific folder to an Amazon S3 bucket. I felt like PostgreSQL is not the right tool for this purpose, so the image uploader script has been written in Python instead while still interacting with the database. The folder has images with names following the format {product_id}_{sequence}.jpg, where sequence stands for the sequential id of the image to distinguish images of the same product. The script iterates through the images in the folder and extracts their product_id. Then, a unique 20-character-long public_id is created for the image and the product_id extracted from the name connects the image to the appropriate product. Once the record has been created, the image is subsequently uploaded to the specified S3 bucket. The public URL to this S3 bucket is then used by the frontend to load the images (once their public_ids have been retrieved using the backend). The whole process is really convenient, since it typically takes less than 15 seconds. 
 
  
 Bibliography
