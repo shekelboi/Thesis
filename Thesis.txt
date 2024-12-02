@@ -7,60 +7,78 @@ Development and Deployment of a Simple Ecommerce Website
 Kevin Zoltán Barta
  
 Contents
-1	Introduction	4
-1.1	Short Description of the Task	4
-1.2	Definition of Ecommerce	4
-1.3	History of Ecommerce	4
-1.3.1	Early Attempts	4
-1.3.2	New Generation of Ecommerce	5
-2	Literature Review	6
-2.1	UI Best Practices	6
-2.1.1	Takeaways from “Don’t Make Me Think”	6
-2.1.2	Takeaways from “Refactoring UI”	8
-2.2	Cloud Deployment and Security	10
-2.2.1	Security Concerns	10
-2.2.2	Common Security Threats	11
-2.2.3	Mitigation of The Security Risks	13
-2.2.4	Cloud Storage	14
-2.2.5	Data Security in the Cloud	15
-2.2.6	Data Privacy in the Cloud	17
-2.3	Analyzing Existing Ecommerce Platforms	18
-2.3.1	Alibaba	18
-2.3.2	Amazon	19
-2.3.3	eBay	20
-2.3.4	WooCommerce	21
-3	Evaluation Criteria	22
-3.1	Nonfunctional Requirements	22
-3.1.1	Performance	22
-3.1.2	Security	22
-3.1.3	Usability	22
-3.1.4	Availability	22
-3.1.5	Extensibility	23
-3.2	Functional Requirements	23
-3.2.1	User Registration and Authentication	23
-3.2.2	Product Catalog	23
-3.2.3	Product Page	23
-3.2.4	Cart	23
-3.2.5	Checkout	23
-3.2.6	Search Engine	24
-3.2.7	Order Tracking	24
-3.2.8	Admin Page	24
-4	System Design	25
-4.1	Frontend Website	25
-4.1.1	Chosen Frontend Technologies	25
-4.1.2	Wireframes	25
-4.2	Database	30
-4.2.1	Chosen DBMS	30
-4.2.2	Schema	30
-5	Implementation	32
-5.1	Frontend Website	32
-5.2	Database	33
-5.2.1	Primary Key	33
-5.2.2	Permission Management	33
-5.2.3	Password Security	33
-5.2.4	Product ID Obfuscation	34
-5.2.5	Automation and Image Management	34
-Bibliography	36
+1	Introduction	7
+1.1	Short Description of the Task	7
+1.2	Definition of Ecommerce	7
+1.3	History of Ecommerce	7
+1.3.1	Early Attempts	7
+1.3.2	New Generation of Ecommerce	8
+2	Literature Review	9
+2.1	UI Best Practices	9
+2.1.1	Takeaways from “Don’t Make Me Think”	9
+2.1.2	Takeaways from “Refactoring UI”	11
+2.2	Cloud Deployment and Security	13
+2.2.1	Security Concerns	13
+2.2.2	Common Security Threats	14
+2.2.3	Mitigation of The Security Risks	16
+2.2.4	Cloud Storage	17
+2.2.5	Data Security in the Cloud	18
+2.2.6	Data Privacy in the Cloud	20
+2.3	Analyzing Existing Ecommerce Platforms	21
+2.3.1	Alibaba	21
+2.3.2	Amazon	22
+2.3.3	eBay	23
+2.3.4	WooCommerce	24
+3	Evaluation Criteria	25
+3.1	Nonfunctional Requirements	25
+3.1.1	Performance	25
+3.1.2	Security	25
+3.1.3	Usability	25
+3.1.4	Availability	25
+3.1.5	Extensibility	26
+3.2	Functional Requirements	26
+3.2.1	User Registration and Authentication	26
+3.2.2	Product Catalog	26
+3.2.3	Product Page	26
+3.2.4	Cart	26
+3.2.5	Checkout	26
+3.2.6	Search Engine	27
+3.2.7	Order Tracking	27
+3.2.8	Admin Page	27
+4	System Design	28
+4.1	Frontend Website	28
+4.1.1	Chosen Frontend Technologies	28
+4.1.2	Wireframes	28
+4.2	Database	33
+4.2.1	Chosen DBMS	33
+4.2.2	Schema	33
+5	Implementation	35
+5.1	Frontend Website	35
+5.2	Database	36
+5.2.1	Primary Key	36
+5.2.2	Permission Management	36
+5.2.3	Password Security	36
+5.2.4	Product ID Obfuscation	37
+5.2.5	Automation and Image Management	37
+5.3	Backend API	38
+5.3.1	Choosing The Technology	38
+5.3.2	Model Classes	38
+5.3.3	Repositories	39
+5.3.4	Services	39
+5.3.5	Controllers	40
+5.3.6	Authentication and Authorization	40
+6	Deployment	42
+6.1	Infrastructure as Code (IaC)	42
+6.2	Setting up the Infrastructure	42
+6.2.1	Setting up AWS and Terraform	42
+6.2.2	Initial Infrastructure	42
+6.2.3	Database	43
+6.2.4	EC2	43
+6.2.5	Load Balancers	44
+6.2.6	Route 53	44
+6.2.7	CloudFront Distribution	44
+6.2.8	Security Groups	44
+Bibliography	45
 
  
 Introduction 
@@ -327,14 +345,37 @@ Services
 Services are where most of the business logic happens. In case of the core features of an ecommerce website, we cannot talk about really complex logic (with the possible exception of authorization and authentication), however some trivial logic was still written within the services. One example would be the product search functionality, which I achieved with the help of regular expressions (matching case insensitively, using a fallback strategy, by showing those products first where the keyword can be found in the title and then those products where it can only be found in the description).
 While reading data is usually straightforward, inserting can become trickier due to the dependencies of the tables and automatically calculated values. An example of this is customer creation, where a salt needs to be generated and the hash value of the password + salt combination needs to be calculated and subsequently stored, however the logic of this has been outsourced to a function within the database.
 Controllers
-
+Controllers are responsible for directly processing the requests and returning the appropriate response to them. Parsing to JSON is handled by Java Spring Boot internally. With the help of Lombok, I created getters for all the models. In some cases, including all the attributes during serialization/deserialization can cause issues. In this case, I used JsonIgnore or JsonBackReference in case of foreign key relations, which makes the engine exclude these attributes from the serialization process.
 Authentication and Authorization
 Authentication and authorization are one of the most complex parts of the API. They are implemented with the help of Spring Security 6 and the JJWT API (for generating JSON Web Tokens).
 By implementing security, the API has been split to two parts: public and private endpoints, with /api/public/, /api/user respectively. The reason for choosing user instead of private was to enable possible future extension for admin authentication, where admin actions, such as user and product creation/modification can only be conducted by admins.
 In the configuration, CSRF protection has been disabled, since it is an issue that only affects stateful application, but since this ecommerce application is stateless thanks to JWT, it is unnecessary to enable CSRF protection. Everyone is allowed to access the public part of the API (/api/public/) while all the other parts of the API require authentication.
 A custom authentication manager has been created to enable password-based authentication with the help of an authenticator function in the database. The authenticator is called from the login controller. It first ensures that both the username and the password have been provided, then attempts to authenticate the user. If the authentication succeeds, a new UsernamePasswordAuthenticationToken is issued, otherwise the method throws an exception. 
 A JWT filter has been created, which checks all the requests on the private endpoints. Its purpose is to extract the JSON Web Token from the authorization header of the request, then extract the claims (such as username, expiry date) from the token, then call the JWT service to validate the user based on the claims, which returns an authentication token if the authentication succeeded. After successful authentication, the SecurityContextHolder’s context is set to the authentication token (so that while the request is processed, the user can be identified) that the JWT service returned. Following this, the request goes through the rest of the filter chain, then reaches the appropriate controller.
-Users are managed using an implementation of the UserDetails interface (CustomerDetails). This class helps with the retrieval of the user’s authorities, username (in my implementation email), password (in my implementation the hash associated with the user) and other important properties, such as whether the user’s account locked or expired. Users can be found using UserDetailsService (CustomerDetailsService), which normally manages the UserDetails objects.
+Users are managed using an implementation of the UserDetails interface (CustomerDetails). This class helps with the retrieval of the user’s authorities, username (in my implementation email), password (in my implementation the hash associated with the user) and other important properties, such as whether the user’s account locked or expired. Users can be found using UserDetailsService (CustomerDetailsService), which normally manages the UserDetails objects. 
+Deployment
+In case of an ecommerce application, the project does not end after development. If we decide to handle deployment on our own, it often requires complex underlying infrastructure. Thankfully, we can facilitate many cloud providers that provide Infrastructure as a Service (IaaS). One such cloud platform is AWS, which is my chosen platform, due to the fact that I have most of my experience with this platform and the two other major cloud platforms (GCP and Azure) do not offer anything over AWS that would make switching to these platforms worthwhile in my case. In this section, I will present how the application can be deployed on AWS.
+Infrastructure as Code (IaC)
+Building the infrastructure manually may look like a good idea in theory, however issues arise when something goes wrong or the company decides to move to another platform. To properly document infrastructural changes, it is better to use IaC, so that the changes can be tracked, monitored and even supervised. The most popular IaC technology today is Terraform, which is a cloud-agnostic tool for provisioning infrastructure. With the help of Terraform, we can easily build, scale and dismantle the infrastructure as necessary.
+Setting up the Infrastructure
+Setting up AWS and Terraform
+For the sake of simplicity, let us assume that we are working with a brand-new account on AWS. The first step is to enable multi-factored authentication (MFA) for the root user account. As of November 2024, this step is mandatory as it should be, since the lack of MFA poses a great risk, due to the amount of leaked credentials online. The next step is to create an IAM user for Terraform and copy its credentials. This is the recommended approach, to avoid accidentally leaking the root credentials, which would pose much greater risk to the user’s account, since the root account controls all the IAM accounts. Once the credentials have been copied, AWS CLI needs to be installed. Once installed, a profile needs to be set up for the Terraform IAM user along with its credentials. The simplest way to test whether the setup succeeded is by running aws sts get-caller-identity, which returns information about the active AWS CLI profile. If this step was successful, Terraform can be installed.
+Initial Infrastructure
+After the AWS credentials have been stored, Terraform should work out of the box. AWS separates its resources by regions and inside regions availability zones. We need to select the region we would like to create our infrastructure in. From the available regions Hungary lies closest to Frankfurt (the only Central-European region), thus our selected region should be eu-central-1.
+The first step to set up the infrastructure is creating a virtual private cloud (VPC). Once the VPC has been created, the next step is subnetting. We will need to create private and public subnets in each of the availability zones. The region eu-central-1 has 3 availability zones (eu-central-1a, eu-central-1b and eu-central-1c), so all together there will be 3×2 subnets. As an example, the VPC could be created with 10.0.0.0/16 CIDR and the subnets inside could go from 10.0.0.0/20 to 10.0.80.0/20 (with 4094 possible hosts each), leaving the 10.0.96.0/19 and 10.0.128.0/17 CIDR blocks unallocated for possible future needs for further subnets.
+After subnetting, an internet gateway needs to be created and attached to the VPC. Then, two route tables need to be created (public and private) and in the public route table traffic needs to be routed to the internet gateway. If the private subnet needs outbound traffic to the internet, a NAT gateway could also be created in that subnet.
+Database
+To set up the database, we can create a database server in RDS. In case of this project, we would need to select PostgreSQL for its engine. Benchmarking should be carried out to determine the necessary instance type. The password for the server can be generated by AWS and stored in the secrets manager. Another alternative, is to manually enter the password and store it encrypted in the SSM Parameter Store. For the sake of security, its best to place the database in the private subnets. Setting up regular backups is also crucial to avoid accidental data loss. We can also enable “Auto minor version upgrade” to automatically receive the latest security updates. Major upgrades could be carried out using blue-green deployment to avoid downtime. To ensure high availability, multi-AZ deployment should be used with a read-replica in another availability zone.
+EC2
+While microservices are steadily gaining popularity, I opt to use a more traditional architecture for running the frontend and the API servers. Two autoscaling groups will be needed, one for the frontend server and another for the API server. The triggers to scale out can be set up based on computational demand (e.g., once CPU usage reaches 75% for a longer period). The autoscaling group requires a launch template. In the launch template, we can specify an Amazon Machine Image (AMI) as our base image (e.g., Ubuntu is a simple choice). We can also specify the instance type (which will determine the CPU and memory of the instance), storage and user data (a script that will be executed on the instance after launch). For configuring the instances, we could use a service such as Ansible, however in our case user data should be suitable enough. In the user data a web server (such as Apache) could be installed, the source could be pulled and built (or a better option is to download the latest build artifact from the GitHub repository and unpack it in the root directory of the web server). Configuration files of the web-server could also be stored remotely, pulled and then applied to the web server. The base URL of the API could be stored in an environment variable that is set in the user data with the help of Terraform. The same process applies both to the frontend and the backend.
+Load Balancers
+Two application load balancers (ALB) need to be created, a private (internal) and a public (internet-facing) ALB. The private ALB will be used by the instances in the autoscaling group of the frontend, to reach the API, while the other ALB will be reached by the end-users. Thanks to the stateless nature of JWT, we do not have to worry about the load balancer switching between different servers, since there is no active session that the servers need to maintain with the client.
+Route 53
+Once the infrastructure has been set up, it is now accessible from the load balancer. No credible ecommerce site would use its load balancer’s DNS however, thus a domain needs to be purchased. Once a domain has been purchased, its name servers need to be set to those of provided by AWS’s Route 53 after a hosted zone has been created. If the domain has been purchased via AWS, this step is not needed, since it is already in the realm of AWS, otherwise it is necessary to ensure that AWS can manage the domain’s DNS records. Once managed by AWS, with the help of the AWS certificate manager (ACM) a TLS certificate can be requested, after that, issuing happens quite quickly.
+CloudFront Distribution
+The CloudFront distribution (CDN) connects the domain, the ALB and the TLS certificate. We need to select the TLS certificate; we intend to apply to our website and the load balancer where the traffic should be routed. Once created, an endpoint will be associated with the CDN. From here, the only step to do is routing our root domain to the endpoint of the CDN by creating a CNAME record.
+Security Groups
+Security groups are necessary to ensure that only the authorized parties can communicate with each other. By default, AWS blocks all access and the security groups specify which parties are able to communicate with each other. The backend instances need to be able to communicate with the database, while backend’s ALB needs to be able to communicate with the frontend autoscaling group’s instances and the end-users need to be able to reach the domain. 
 
  
 Bibliography
