@@ -1,4 +1,51 @@
- 
+
+NEUMANN JÁNOS
+FACULTY OF INFORMATICS	Annex 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+THESIS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OE-NIK	Student’s name:	Barta, Zoltán Kevin
+2024	Student’s registration number:	T-006056/FI12904/N
+
  
  
 
@@ -54,31 +101,33 @@ Contents
 4.2.2	Schema	33
 5	Implementation	35
 5.1	Frontend Website	35
-5.2	Database	36
-5.2.1	Primary Key	36
-5.2.2	Permission Management	36
-5.2.3	Password Security	36
-5.2.4	Product ID Obfuscation	37
-5.2.5	Automation and Image Management	37
-5.3	Backend API	38
-5.3.1	Choosing The Technology	38
-5.3.2	Model Classes	38
-5.3.3	Repositories	39
-5.3.4	Services	39
-5.3.5	Controllers	40
-5.3.6	Authentication and Authorization	40
-6	Deployment	42
-6.1	Infrastructure as Code (IaC)	42
-6.2	Setting up the Infrastructure	42
-6.2.1	Setting up AWS and Terraform	42
-6.2.2	Initial Infrastructure	42
-6.2.3	Database	43
-6.2.4	EC2	43
-6.2.5	Load Balancers	44
-6.2.6	Route 53	44
-6.2.7	CloudFront Distribution	44
-6.2.8	Security Groups	44
-Bibliography	45
+5.1.1	API Client	35
+5.1.2	ImageService	36
+5.2	Database	37
+5.2.1	Primary Key	37
+5.2.2	Permission Management	37
+5.2.3	Password Security	37
+5.2.4	Product ID Obfuscation	38
+5.2.5	Automation and Image Management	38
+5.3	Backend API	40
+5.3.1	Choosing The Technology	40
+5.3.2	Model Classes	40
+5.3.3	Repositories	41
+5.3.4	Services	41
+5.3.5	Controllers	41
+5.3.6	Authentication and Authorization	42
+6	Deployment	43
+6.1	Infrastructure as Code (IaC)	43
+6.2	Setting up the Infrastructure	43
+6.2.1	Setting up AWS and Terraform	43
+6.2.2	Initial Infrastructure	43
+6.2.3	Database	44
+6.2.4	EC2	44
+6.2.5	Load Balancers	45
+6.2.6	Route 53	45
+6.2.7	CloudFront Distribution	45
+6.2.8	Security Groups	45
+Bibliography	46
 
  
 Introduction 
@@ -305,7 +354,37 @@ Figure 4.5 ERD of the initial state of the schema
 
  
 Figure 4.6 ERD of the improved version of the schema
-As seen in Figure 4.5 ERD of the initial state of the schema, I used title case, which I later regretted, since I find that the case-insensitive nature of SQL renders it useless, so I replaced it with snake case, which is more appropriate for table and field names in my opinion. In the newer schema, Figure 4.6 ERD of the improved version of the schema, I also managed to eliminate the SubcategoryAndProduct connector table, since I realized I should make one product belong to only one subcategory, to keep the site simple (this becomes obvious from looking at the wireframes, since the breadcrumbs on the product page points to the appropriate subcategory of the product, which is only possible to implement, if a product only belongs to one category). An Image table has been connected to the Product table, so that images can be associated with the products. I also paid attention to more subtle details, e.g., not using reserved words such as order and user as the names of the tables. 
+As seen in Figure 4.5 ERD of the initial state of the schema, I used title case, which I later regretted, since I find that the case-insensitive nature of SQL renders it useless, so I replaced it with snake case, which is more appropriate for table and field names in my opinion. In the newer schema, Figure 4.6 ERD of the improved version of the schema, I also managed to eliminate the SubcategoryAndProduct connector table, since I realized I should make one product belong to only one subcategory, to keep the site simple (this becomes obvious from looking at the wireframes, since the breadcrumbs on the product page points to the appropriate subcategory of the product, which is only possible to implement, if a product only belongs to one category). An Image table has been connected to the Product table, so that images can be associated with the products. I also paid attention to more subtle details, e.g., not using reserved words such as order and user as the names of the tables.  
+Backend API
+The purpose of the backend API is to securely enable data retrieval and mutation in the database. The API can be broken down to two parts: private and public API. The public part of the API is accessible by everyone, good examples to this is retrieving products, categories or the login endpoint. The private API is only accessible by authenticated users, (e.g., the endpoint for retrieving orders) or admins (e.g., creating products in the database.
+Public Endpoints
+Public endpoints that need to be created, along with the action that needs to be taken:
+Customers
+	Create customer – create a customer in the database.
+	Authenticate – authenticate the user using the combination of the user’s email and password. Issue a JWT token which can be stored by the user’s browser.
+Products
+	List products – list all the products or filter them by a keyword if any was specified. Further filters and sorting can be implemented, based on price or amount in stock. 
+	Product – get information about a specific product.
+Categories
+	List categories – list all the categories.
+	List subcategories – list all the subcategories.
+	List products in category – list all the products within the specified category.
+	List products in subcategory – list all the products within the specified subcategory.
+Customer Endpoints
+The following endpoints are specific to authenticated customers:
+	Forgot password – send an email to the user that allows them to reset their password in a limited timeframe.
+	Reset password – the endpoint that can be used by the unique link sent in the password reset email.
+	Place order – purchase products bundled together in an order.
+	List orders – list all the orders associated with the user.
+	Order – shows information about an order placed by the customer (including shipping updates).
+	Add address – add a new address.
+	Update profile – update information such as first or last name, phone number or default address.
+	Update email – update the email address of the authenticated user while prompting them for their password for security reasons.
+	Update password – update the password of the authenticated user, while prompting them for their old password for security reasons.
+	Logout – revokes the previously issued JWT token therefore logging out the user.
+	Delete customer – deletes the user’s account.
+Admin Endpoints
+These endpoints should not only be private but also only users with specific authorities should be able to access them. The endpoints could be called from the dedicated admin page to execute CRUD operations on the different tables. These operations require careful planning, since the tables are related to each other, meaning that a simple deletion or addition could end in a foreign-key conflict. 
 
  
 Implementation
@@ -313,6 +392,13 @@ Frontend Website
 I started the implementation of the frontend website by setting up the appropriate environment. I reviewed whether I had the necessary programs installed, such as Angular CLI version, Node.js and the npm package of PrimeNG. Initially I focused on my biggest weakness, which was CSS, by practicing it independently of the project and later on gradually building components within the project.
 Basic responsiveness (responding to zoom and different screen sizes) was an important aspect in development process, however my initial approach to adjust the size of the components based on the screen with and height, later on using viewport, proved to be inaccurate. Later on, I realized I could use rem as a unit of measurement, which sets the size of the components relative to the root font size. This resulted in significant improvement in responsiveness in case of zooming albeit this alone does not make the website mobile-friendly. Since building a working website first was more urgent, I decided to lower the priority of making it mobile friendly and focus on the development of the main functionalities of the website and only once that is finished, then make the website responsive. Typically, it is recommended to take a mobile-first approach and develop the mobile version of the website first (since it is easier to create a desktop version from there, unlike the other way around), however in my case the main focus was on the desktop version.
 Unsurprisingly, due to the fact that I did a lot of trial and error, the folder structure got cluttered quickly, which I decided not to bother, until I reach a stable state of the website. Once I designed the subsections that appear on every page (the header and the footer), I decided to create a systema for my components. I decided to hierarchically and logically group the components together, e.g., the components used by the navigation bar would appear under its folder (unless it is used within other components too, in which case it should be placed in a folder designated for shared components). Although I was not sure whether I can settle for this structure for the entire duration of the project, having organized the folder structure significantly simplified overviewing the project.
+API Client
+After the foundation had been laid down, it was time to load some data to test the different pages. Initially, I loaded the data from JSON files using a test data loader service. This way, I could work on the design on the website while the API was still in development. Once the API reached a working state, I decided to create an API client that is responsible for communicating with the API. I could reuse the model classes that I created during the testing phase (e.g., Product, Customer). The API client just stores the base URL of the API, injects an HttpClient and is mainly used other services as a base class. Different components each have their own service (e.g., ProductService, CustomerService). Each endpoint in the backend API has its corresponding method in one of these services which together form the client API. These methods return observables, to which we can subscribe inside the components that call the methods.
+ImageService
+The ImageService is responsible for retrieving the images of different products. The service stores the endpoint of the S3 bucket where the product images are hosted. Since each of the images has their own unique public ID, we can use that to retrieve them by simply appending “.jpg” to the end of their IDs. In case a product does not have any image associated with it, the service also has an option to show a blank image which displays a typical placeholder image.
+Observables
+Handling observables was one of the most challenging part of frontend web development. With the help of RxJS, it is possible to make an observable depend on another, reducing the need for a complex chain of subscriptions. Albeit the robust framework RxJS offers for observables, mastering it is a challenging task. Communication between different components can become difficult over time, to overcome this challenge, a SubjectBroken can be created, that stores different subjects which can emit their values as their values change and other components can subscribe to them. Normal observables are not multicasting, whereas subjects are, enabling us to subscribe to them from multiple components.
+
  
 Database
 As I mentioned previously PostgreSQL was the database of my choice.
@@ -330,6 +416,7 @@ To solve this problem, I decided to introduce two new fields in the product tabl
 Automation and Image Management
 During development, the database may have to be recreated numerous times. For this reason, I decided to automate this process. Initially I did this manually running sequentially multiple SQL files, to create the shopadmin user, the ecommerce table as the shopadmin user and the necessary tables/functions, then populate those tables. As the complexity grew, I realized I should further automate this process. I created a simple CMD script that can easily be rewritten in Bash too if needed, using the psql command, to run the necessary scripts sequentially. Previously I used psql commands, such as \c within the SQL scripts, however since this is not allowed when loading SQL scripts using the psql command, I had to add additional psql commands for changing the user or the database. In the SQL files I also made use of prepared statements and functions to further help with the population of the tables (e.g., in case of customer table, since the salt and the password are connected, the users must be created through a function).
 After the simpler part of the automation has been done, I decided to populate the image table by uploading images from a specific folder to an Amazon S3 bucket. I felt like PostgreSQL is not the right tool for this purpose, so the image uploader script has been written in Python instead while still interacting with the database. The folder has images with names following the format {product_id}_{sequence}.jpg, where sequence stands for the sequential id of the image to distinguish images of the same product. The script iterates through the images in the folder and extracts their product_id. Then, a unique 20-character-long public_id is created for the image and the product_id extracted from the name connects the image to the appropriate product. Once the record has been created, the image is subsequently uploaded to the specified S3 bucket. The public URL to this S3 bucket is then used by the frontend to load the images (once their public_ids have been retrieved using the backend). The whole process is really convenient, since it typically takes less than 15 seconds. 
+ 
 Backend API
 In order to do CRUD operations and dynamically load the data, an API is needed. The website will facilitate the API the user’s visit, namely for retrieving the products, logging in, placing orders, tracking orders and logging out. 
 Choosing The Technology
