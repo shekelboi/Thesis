@@ -99,35 +99,40 @@ Contents
 4.2	Database	33
 4.2.1	Chosen DBMS	33
 4.2.2	Schema	33
-5	Implementation	35
-5.1	Frontend Website	35
-5.1.1	API Client	35
-5.1.2	ImageService	36
-5.2	Database	37
-5.2.1	Primary Key	37
-5.2.2	Permission Management	37
-5.2.3	Password Security	37
-5.2.4	Product ID Obfuscation	38
-5.2.5	Automation and Image Management	38
-5.3	Backend API	40
-5.3.1	Choosing The Technology	40
-5.3.2	Model Classes	40
-5.3.3	Repositories	41
-5.3.4	Services	41
-5.3.5	Controllers	41
-5.3.6	Authentication and Authorization	42
-6	Deployment	43
-6.1	Infrastructure as Code (IaC)	43
-6.2	Setting up the Infrastructure	43
-6.2.1	Setting up AWS and Terraform	43
-6.2.2	Initial Infrastructure	43
-6.2.3	Database	44
-6.2.4	EC2	44
-6.2.5	Load Balancers	45
-6.2.6	Route 53	45
-6.2.7	CloudFront Distribution	45
-6.2.8	Security Groups	45
-Bibliography	46
+4.3	Backend API	35
+4.3.1	Public Endpoints	35
+4.3.2	Customer Endpoints	35
+4.3.3	Admin Endpoints	36
+5	Implementation	37
+5.1	Frontend Website	37
+5.1.1	API Client	37
+5.1.2	ImageService	38
+5.1.3	Observables	38
+5.2	Database	39
+5.2.1	Primary Key	39
+5.2.2	Permission Management	39
+5.2.3	Password Security	39
+5.2.4	Product ID Obfuscation	40
+5.2.5	Automation and Image Management	40
+5.3	Backend API	42
+5.3.1	Choosing The Technology	42
+5.3.2	Model Classes	42
+5.3.3	Repositories	43
+5.3.4	Services	43
+5.3.5	Controllers	43
+5.3.6	Authentication and Authorization	44
+6	Deployment	45
+6.1	Infrastructure as Code (IaC)	45
+6.2	Setting up the Infrastructure	45
+6.2.1	Setting up AWS and Terraform	45
+6.2.2	Initial Infrastructure	45
+6.2.3	Database	46
+6.2.4	EC2	46
+6.2.5	Load Balancers	47
+6.2.6	Route 53	47
+6.2.7	CloudFront Distribution	47
+6.2.8	Security Groups	47
+Bibliography	48
 
  
 Introduction 
@@ -463,6 +468,22 @@ CloudFront Distribution
 The CloudFront distribution (CDN) connects the domain, the ALB and the TLS certificate. We need to select the TLS certificate; we intend to apply to our website and the load balancer where the traffic should be routed. Once created, an endpoint will be associated with the CDN. From here, the only step to do is routing our root domain to the endpoint of the CDN by creating a CNAME record.
 Security Groups
 Security groups are necessary to ensure that only the authorized parties can communicate with each other. By default, AWS blocks all access and the security groups specify which parties are able to communicate with each other. The backend instances need to be able to communicate with the database, while backend’s ALB needs to be able to communicate with the frontend autoscaling group’s instances and the end-users need to be able to reach the domain. 
+Evaluation
+Self-assessment can be conducted with the previously outlined evaluation criteria. In this section, I will linearly walk through the requirements specified in the evaluation criteria section.
+Nonfunctional Requirements
+High performance has been ensured by using a compiled language efficiently for the backend API. Although I did not carry out any benchmarking, I also did not notice any components that would have an issue with their loading time on the frontend. A possible improvement after deployment could be to continuously monitor the performance of the application using some monitoring tool such as Prometheus with Grafana, Datadog or even the built-in tools on AWS console.
+Security is guaranteed by authenticating the user and then using JWT token for authentication/authorization. Further improvements could be done here by a more fine-grained permission scheme for the private endpoints of the API. Another potential improvement could be adding a CI/CD pipeline for automatically updating packages (this could be done with the help of GitHub Actions and enabling and configuring Dependabot).
+In terms of usability, I did not experience any issue. To me, the UI seems intuitive and easy to use. However, further tests should be conducted (e.g., a usability test or surveying users) to ensure that the UI really is intuitive and whether there could be any improvements added.
+With the cloud infrastructure I previously outlined, availability should not be an issue (with the possible short-term exception of a really sudden spike in traffic). A potential improvement could be containerizing the services and moving the application into an Elastic Kubernetes Service (EKS) Cluster.
+Extensibility is arguably hard to evaluate as it highly depends on how we intend to extend the application. Throughout development, I used a modular approach to ensure future extensions can be carried out smoothly.
+Functional Requirements
+While nonfunctional requirements may be challenging to evaluate, due to their vague nature, functional requirements are straightforward, thus they can be evaluated more objectively.
+User authentication has been implemented and users can be created with the help of the backend API, however on the frontend, the user registration page is still missing.
+The product catalog is working as expected and the products can be browsed by different categories.
+The cart, checkout and order tracking functionalities are missing. This is mainly due to the fact that even more crucial parts of the application took up more time than expected and authentication has only been implemented in the latest stage of the project, leaving room for the future implementation of these features.
+A minimalistic search engine has been implemented which looks for the keyword in the name and description of the products. Further improvements could be added by adding sorting and filtering functionalities.
+An admin page has not been created but admin functionalities have been added to the backend API. In my opinion the admin page should come as lowest priority, as it is not something that affects user experience, it merely simplifies mutating entities in the database.
+Overall, it is clear that many functionalities are missing from the functional requirements, while the nonfunctional requirements have fulfilled. This is largely due to the limited timeframe I had for the project and the fact that I was unwilling to compromise on the quality of the application in exchange for developing more functionalities.
 
  
 Bibliography
