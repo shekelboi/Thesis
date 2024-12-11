@@ -1,6 +1,6 @@
 
 NEUMANN JÁNOS
-FACULTY OF INFORMATICS	Annex 5
+FACULTY OF INFORMATICS			
 
 
 
@@ -47,93 +47,114 @@ OE-NIK	Student’s name:	Barta, Zoltán Kevin
 2024	Student’s registration number:	T-006056/FI12904/N
 
  
+  
+  
  
 
+ 
+  
+Abstract
+
+Ecommerce platforms are steadily gaining popularity and present developers with new tasks and challenges. This paper focuses on building and deploying a simple ecommerce website from scratch. It revolves around all the necessary components to develop the final product, including the frontend website, the backend API and the database.
+The research points out the complexities faced by those willing to undertake the challenge of creating an ecommerce platform without heavily relying on third-party services. This task includes, but not limited to, planning the user interface, choosing the right technologies, focusing on the usability of the website, defining the schema of the database, extensibility, security considerations and maintaining high availability.
+The website was created using Angular, the API was developed in Java Spring Boot, while the database uses PostgreSQL. The development is followed from the planning stage, through specification up to the actual implementation. The deployment process is described in the cloud, using AWS as the chosen platform. Additionally, evaluation criteria have been outlined, to help the assessment of the project.
+The findings emphasize the complexity of developing a full-fledged ecommerce application. The importance of security for ecommerce applications is also touched upon, while also shedding light to the difficulty of accurately estimating project durations.
+ 
+Absztrakt
+
+Az ecommerce (e-kereskedelem) platformok népszerűsége folyamatosan növekszik, ami új feladatok és kihívások elé állítja a fejlesztőket. Ez a munka egy egyszerű ecommerce weboldal fejlesztésének és üzembe helyezésének jár utána. Körbejárja mindazon komponenseket, amelyek a végleges termék kifejlesztéséhez szükségesek, beleértve a frontend weboldalt, a backend API-t és az adatbázist.
+A kutatás rámutat azokra a nehézségekre melyekkel akkor találkozhatunk, ha egy ecommerce platform kifejlesztésére szánjuk magunkat anélkül, hogy nagyrészt harmadik-féltől származó szolgáltatásokra támaszkodnánk. Ebbe a feladatba tartozik nem kizárólagosan a felhasználói felület megtervezése, a megfelelő technológiák kiválasztása, a weboldal használhatóságára való fókuszálás, az adatbázis sémájának a definiálása, a bővíthetőség, biztonságtechnikai szempontok és a magas szintű rendelkezésre állás.
+A weboldal Angular keretrendszerben készült, az API Java Spring Boot-ra épült, míg az adatbázis PostgreSQL-t használ. A fejlesztés a tervezéstől, a specifikáción át, egészen a tényleges implementációig le van írva. Az üzembe helyezés a felhőben történik, melynek a menete, a választott platformon, AWS-en keresztül van leírva. Ezen felül elbírálási kritériumok lettek megfogalmazva, melyek a projekt értékelésében kívánnak segíteni.
+A megállapítások kiemelik egy mindenre kiterjedő ecommerce applikáció fejlesztésének a komplexitását. Érintik a fontosságát a biztonságtechnikának, és fényt vetnek projekt várható időtartamának megbecsülésének a nehézségeire is.
  
 Development and Deployment of a Simple Ecommerce Website
 Kevin Zoltán Barta
  
 Contents
-1	Introduction	7
-1.1	Short Description of the Task	7
-1.2	Definition of Ecommerce	7
-1.3	History of Ecommerce	7
-1.3.1	Early Attempts	7
-1.3.2	New Generation of Ecommerce	8
-2	Literature Review	9
-2.1	UI Best Practices	9
-2.1.1	Takeaways from “Don’t Make Me Think”	9
-2.1.2	Takeaways from “Refactoring UI”	11
-2.2	Cloud Deployment and Security	13
-2.2.1	Security Concerns	13
-2.2.2	Common Security Threats	14
-2.2.3	Mitigation of The Security Risks	16
-2.2.4	Cloud Storage	17
-2.2.5	Data Security in the Cloud	18
-2.2.6	Data Privacy in the Cloud	20
-2.3	Analyzing Existing Ecommerce Platforms	21
-2.3.1	Alibaba	21
-2.3.2	Amazon	22
-2.3.3	eBay	23
-2.3.4	WooCommerce	24
-3	Evaluation Criteria	25
-3.1	Nonfunctional Requirements	25
-3.1.1	Performance	25
-3.1.2	Security	25
-3.1.3	Usability	25
-3.1.4	Availability	25
-3.1.5	Extensibility	26
-3.2	Functional Requirements	26
-3.2.1	User Registration and Authentication	26
-3.2.2	Product Catalog	26
-3.2.3	Product Page	26
-3.2.4	Cart	26
-3.2.5	Checkout	26
-3.2.6	Search Engine	27
-3.2.7	Order Tracking	27
-3.2.8	Admin Page	27
-4	System Design	28
-4.1	Frontend Website	28
-4.1.1	Chosen Frontend Technologies	28
-4.1.2	Wireframes	28
-4.2	Database	33
-4.2.1	Chosen DBMS	33
-4.2.2	Schema	33
-4.3	Backend API	35
-4.3.1	Public Endpoints	35
-4.3.2	Customer Endpoints	35
-4.3.3	Admin Endpoints	36
-5	Implementation	37
-5.1	Frontend Website	37
-5.1.1	API Client	37
-5.1.2	ImageService	38
-5.1.3	Observables	38
-5.2	Database	39
-5.2.1	Primary Key	39
-5.2.2	Permission Management	39
-5.2.3	Password Security	39
-5.2.4	Product ID Obfuscation	40
-5.2.5	Automation and Image Management	40
-5.3	Backend API	42
-5.3.1	Choosing The Technology	42
-5.3.2	Model Classes	42
-5.3.3	Repositories	43
-5.3.4	Services	43
-5.3.5	Controllers	43
-5.3.6	Authentication and Authorization	44
-6	Deployment	45
-6.1	Infrastructure as Code (IaC)	45
-6.2	Setting up the Infrastructure	45
-6.2.1	Setting up AWS and Terraform	45
-6.2.2	Initial Infrastructure	45
-6.2.3	Database	46
-6.2.4	EC2	46
-6.2.5	Load Balancers	47
-6.2.6	Route 53	47
-6.2.7	CloudFront Distribution	47
-6.2.8	Security Groups	47
-Bibliography	48
-
+1	Introduction	12
+1.1	Short Description of the Task	12
+1.2	Definition of Ecommerce	12
+1.3	History of Ecommerce	12
+1.3.1	Early Attempts	12
+1.3.2	New Generation of Ecommerce	13
+2	Literature Review	14
+2.1	UI Best Practices	14
+2.1.1	Takeaways from “Don’t Make Me Think”	14
+2.1.2	Takeaways from “Refactoring UI”	16
+2.2	Cloud Deployment and Security	18
+2.2.1	Security Concerns	18
+2.2.2	Common Security Threats	19
+2.2.3	Mitigation of The Security Risks	21
+2.2.4	Cloud Storage	22
+2.2.5	Data Security in the Cloud	23
+2.2.6	Data Privacy in the Cloud	25
+2.3	Analyzing Existing Ecommerce Platforms	26
+2.3.1	Alibaba	26
+2.3.2	Amazon	27
+2.3.3	eBay	28
+2.3.4	WooCommerce	29
+3	Evaluation Criteria	30
+3.1	Nonfunctional Requirements	30
+3.1.1	Performance	30
+3.1.2	Security	30
+3.1.3	Usability	30
+3.1.4	Availability	30
+3.1.5	Extensibility	31
+3.2	Functional Requirements	31
+3.2.1	User Registration and Authentication	31
+3.2.2	Product Catalog	31
+3.2.3	Product Page	31
+3.2.4	Cart	31
+3.2.5	Checkout	31
+3.2.6	Search Engine	32
+3.2.7	Order Tracking	32
+3.2.8	Admin Page	32
+4	System Design	33
+4.1	Frontend Website	33
+4.1.1	Chosen Frontend Technologies	33
+4.1.2	Wireframes	33
+4.2	Database	35
+4.2.1	Chosen DBMS	35
+4.2.2	Schema	36
+4.3	Backend API	37
+4.3.1	Public Endpoints	38
+4.3.2	Customer Endpoints	38
+4.3.3	Admin Endpoints	39
+5	Implementation	40
+5.1	Frontend Website	40
+5.1.1	API Client	40
+5.1.2	ImageService	41
+5.1.3	Observables	41
+5.2	Database	41
+5.2.1	Primary Key	41
+5.2.2	Permission Management	42
+5.2.3	Password Security	42
+5.2.4	Product ID Obfuscation	42
+5.2.5	Automation and Image Management	43
+5.3	Backend API	43
+5.3.1	Choosing The Technology	43
+5.3.2	Model Classes	44
+5.3.3	Repositories	44
+5.3.4	Services	45
+5.3.5	Controllers	45
+5.3.6	Authentication and Authorization	45
+6	Deployment	47
+6.1	Infrastructure as Code (IaC)	47
+6.2	Setting up the Infrastructure	47
+6.2.1	Setting up AWS and Terraform	47
+6.2.2	Initial Infrastructure	47
+6.2.3	Database	48
+6.2.4	EC2	48
+6.2.5	Load Balancers	49
+6.2.6	Route 53	49
+6.2.7	CloudFront Distribution	49
+6.2.8	Security Groups	49
+7	Evaluation	50
+7.1	Nonfunctional Requirements	50
+7.2	Functional Requirements	50
+8	Conclusion	52
+8.1	Future Work	52
+Bibliography	53
  
 Introduction 
 Short Description of the Task
@@ -340,7 +361,7 @@ Once settled with the frontend technologies, I decided to create a blueprint of 
  
 Figure 4.1 - Home page
 Figure 4.1 - Home page depicts the home page of the website, which includes some promotions, the header and the footer. The header includes the site id (the logo of the website with a link to the home page), a multi-level dropdown for selecting the appropriate category and subcategory, a search field for looking up products, sign in and register buttons and the user’s cart. The footer includes the most typical links for an online store, such as contact, the about page, shipping information and a page for handling complaints.
-  
+ 
 Figure 4.2 - Subcategory Page
 Figure 4.2 - Subcategory Page includes breadcrumbs, that show which category and subcategory the user selected, product cards with the names and the prices of the products on them.
  
@@ -348,7 +369,7 @@ Figure 4.3 – Product Page
 Figure 4.3 – Product Page shows images of the product, along with a photo carousel, name and description of the product, the price of it, the quantity to order (which defaults to 1) and a button to add the required quantity to the cart. It also includes the breadcrumbs that show the category and the subcategory of the product.
  
 Figure 4.4 - Cart Page
-Figure 4.4 - Cart Page shows the items that the user has added to the cart. A thumbnail is shown of the item, along with its name, a short description, the price and the quantity the user specified and a proceed to checkout button, which once clicked takes the user to the page where they are prompted for their personal information and shipping address. 
+Figure 4.4 - Cart Page shows the items that the user has added to the cart. A thumbnail is shown of the item, along with its name, a short description, the price and the quantity the user specified and a proceed to checkout button, which once clicked takes the user to the page where they are prompted for their personal information and shipping address.
 Database
 Chosen DBMS
 In order to store persistent data efficiently a database is inevitable for an application. Since I am not dealing with large volumes of unorganized data, I decided to use a relational database. The next step was selecting the database management system (DBMS). In the past, I had done research on different database management systems and at that time came to the conclusion that PostgeSQL and MySQL are the best choices for most use-cases. These two systems were my chosen options, thanks to the fact that they are free and open-source, scalable, they boast a really large user base and both systems rank high in performance benchmarks. Considering that there is no huge gain from choosing one over the other, I made my decision based on my own observation of tendencies, namely that PostgreSQL is gaining traction over MySQL.
@@ -356,10 +377,9 @@ Schema
 Once the DBMS has been chosen the next step was to create a database schema. I tried to determine what possible entities may be needed for an ecommerce website and came up with an initial schema. Unsure about my schema, I decided to revisit it once I already designed the initial state of the frontend. I decided to wait, to gain first-hand insights about possible missing entities or unexpected constraints that I might have failed to consider. Waiting has proven to be a good decision, because in the end I came up with a more refined schema, with a lot of considerations.
  
 Figure 4.5 ERD of the initial state of the schema
-
  
 Figure 4.6 ERD of the improved version of the schema
-As seen in Figure 4.5 ERD of the initial state of the schema, I used title case, which I later regretted, since I find that the case-insensitive nature of SQL renders it useless, so I replaced it with snake case, which is more appropriate for table and field names in my opinion. In the newer schema, Figure 4.6 ERD of the improved version of the schema, I also managed to eliminate the SubcategoryAndProduct connector table, since I realized I should make one product belong to only one subcategory, to keep the site simple (this becomes obvious from looking at the wireframes, since the breadcrumbs on the product page points to the appropriate subcategory of the product, which is only possible to implement, if a product only belongs to one category). An Image table has been connected to the Product table, so that images can be associated with the products. I also paid attention to more subtle details, e.g., not using reserved words such as order and user as the names of the tables.  
+As seen in Figure 4.5 ERD of the initial state of the schema, I used title case, which I later regretted, since I find that the case-insensitive nature of SQL renders it useless, so I replaced it with snake case, which is more appropriate for table and field names in my opinion. In the newer schema, Figure 4.6 ERD of the improved version of the schema, I also managed to eliminate the SubcategoryAndProduct connector table, since I realized I should make one product belong to only one subcategory, to keep the site simple (this becomes obvious from looking at the wireframes, since the breadcrumbs on the product page points to the appropriate subcategory of the product, which is only possible to implement, if a product only belongs to one category). An Image table has been connected to the Product table, so that images can be associated with the products. I also paid attention to more subtle details, e.g., not using reserved words such as order and user as the names of the tables. 
 Backend API
 The purpose of the backend API is to securely enable data retrieval and mutation in the database. The API can be broken down to two parts: private and public API. The public part of the API is accessible by everyone, good examples to this is retrieving products, categories or the login endpoint. The private API is only accessible by authenticated users, (e.g., the endpoint for retrieving orders) or admins (e.g., creating products in the database.
 Public Endpoints
@@ -403,8 +423,6 @@ ImageService
 The ImageService is responsible for retrieving the images of different products. The service stores the endpoint of the S3 bucket where the product images are hosted. Since each of the images has their own unique public ID, we can use that to retrieve them by simply appending “.jpg” to the end of their IDs. In case a product does not have any image associated with it, the service also has an option to show a blank image which displays a typical placeholder image.
 Observables
 Handling observables was one of the most challenging part of frontend web development. With the help of RxJS, it is possible to make an observable depend on another, reducing the need for a complex chain of subscriptions. Albeit the robust framework RxJS offers for observables, mastering it is a challenging task. Communication between different components can become difficult over time, to overcome this challenge, a SubjectBroken can be created, that stores different subjects which can emit their values as their values change and other components can subscribe to them. Normal observables are not multicasting, whereas subjects are, enabling us to subscribe to them from multiple components.
-
- 
 Database
 As I mentioned previously PostgreSQL was the database of my choice.
 Primary Key
@@ -420,8 +438,7 @@ Following the principle of security through obscurity the ID (for example a prod
 To solve this problem, I decided to introduce two new fields in the product table. The first field is called public_id, the public identifier of the product, a 12 character long randomly generated base32 text. The generation of this id is handled by a custom user-defined function called generate_base_32. This function attempts to generate a base32 ID of a given length (by default 12) until it successfully finds a unique ID. Using a simplified form of the birthday problem, we can approximate that it would take about √M products, where M is the number of possibilities, before we face a 50% chance of collision during ID generation. Plugging in 3212 for M, we get √(32^12 )=1073741824, which means it would take more than a billion products to reach that point. This is an acceptable compromise between trying to keep the length of the ID short while also ensuring that the system is capable of handling larger volumes of products.
 Automation and Image Management
 During development, the database may have to be recreated numerous times. For this reason, I decided to automate this process. Initially I did this manually running sequentially multiple SQL files, to create the shopadmin user, the ecommerce table as the shopadmin user and the necessary tables/functions, then populate those tables. As the complexity grew, I realized I should further automate this process. I created a simple CMD script that can easily be rewritten in Bash too if needed, using the psql command, to run the necessary scripts sequentially. Previously I used psql commands, such as \c within the SQL scripts, however since this is not allowed when loading SQL scripts using the psql command, I had to add additional psql commands for changing the user or the database. In the SQL files I also made use of prepared statements and functions to further help with the population of the tables (e.g., in case of customer table, since the salt and the password are connected, the users must be created through a function).
-After the simpler part of the automation has been done, I decided to populate the image table by uploading images from a specific folder to an Amazon S3 bucket. I felt like PostgreSQL is not the right tool for this purpose, so the image uploader script has been written in Python instead while still interacting with the database. The folder has images with names following the format {product_id}_{sequence}.jpg, where sequence stands for the sequential id of the image to distinguish images of the same product. The script iterates through the images in the folder and extracts their product_id. Then, a unique 20-character-long public_id is created for the image and the product_id extracted from the name connects the image to the appropriate product. Once the record has been created, the image is subsequently uploaded to the specified S3 bucket. The public URL to this S3 bucket is then used by the frontend to load the images (once their public_ids have been retrieved using the backend). The whole process is really convenient, since it typically takes less than 15 seconds. 
- 
+After the simpler part of the automation has been done, I decided to populate the image table by uploading images from a specific folder to an Amazon S3 bucket. I felt like PostgreSQL is not the right tool for this purpose, so the image uploader script has been written in Python instead while still interacting with the database. The folder has images with names following the format {product_id}_{sequence}.jpg, where sequence stands for the sequential id of the image to distinguish images of the same product. The script iterates through the images in the folder and extracts their product_id. Then, a unique 20-character-long public_id is created for the image and the product_id extracted from the name connects the image to the appropriate product. Once the record has been created, the image is subsequently uploaded to the specified S3 bucket. The public URL to this S3 bucket is then used by the frontend to load the images (once their public_ids have been retrieved using the backend). The whole process is really convenient, since it typically takes less than 15 seconds.
 Backend API
 In order to do CRUD operations and dynamically load the data, an API is needed. The website will facilitate the API the user’s visit, namely for retrieving the products, logging in, placing orders, tracking orders and logging out. 
 Choosing The Technology
@@ -472,7 +489,7 @@ Evaluation
 Self-assessment can be conducted with the previously outlined evaluation criteria. In this section, I will linearly walk through the requirements specified in the evaluation criteria section.
 Nonfunctional Requirements
 High performance has been ensured by using a compiled language efficiently for the backend API. Although I did not carry out any benchmarking, I also did not notice any components that would have an issue with their loading time on the frontend. A possible improvement after deployment could be to continuously monitor the performance of the application using some monitoring tool such as Prometheus with Grafana, Datadog or even the built-in tools on AWS console.
-Security is guaranteed by authenticating the user and then using JWT token for authentication/authorization. Further improvements could be done here by a more fine-grained permission scheme for the private endpoints of the API. Another potential improvement could be adding a CI/CD pipeline for automatically updating packages (this could be done with the help of GitHub Actions and enabling and configuring Dependabot).
+Security is guaranteed by authenticating the user and then using JWT token for authentication/authorization. Further improvements could be done here by a more fine-grained permission scheme for the private endpoints of the API. Another potential improvement could be adding a Continuous Integration/Continuous Delivery (CI/CD) pipeline for automatically updating packages (this could be done with the help of GitHub Actions and enabling and configuring Dependabot).
 In terms of usability, I did not experience any issue. To me, the UI seems intuitive and easy to use. However, further tests should be conducted (e.g., a usability test or surveying users) to ensure that the UI really is intuitive and whether there could be any improvements added.
 With the cloud infrastructure I previously outlined, availability should not be an issue (with the possible short-term exception of a really sudden spike in traffic). A potential improvement could be containerizing the services and moving the application into an Elastic Kubernetes Service (EKS) Cluster.
 Extensibility is arguably hard to evaluate as it highly depends on how we intend to extend the application. Throughout development, I used a modular approach to ensure future extensions can be carried out smoothly.
@@ -485,6 +502,16 @@ A minimalistic search engine has been implemented which looks for the keyword in
 An admin page has not been created but admin functionalities have been added to the backend API. In my opinion the admin page should come as lowest priority, as it is not something that affects user experience, it merely simplifies mutating entities in the database.
 Overall, it is clear that many functionalities are missing from the functional requirements, while the nonfunctional requirements have fulfilled. This is largely due to the limited timeframe I had for the project and the fact that I was unwilling to compromise on the quality of the application in exchange for developing more functionalities.
 
+ 
+Conclusion
+This paper aims to showcase the planning, implementation and deployment of an ecommerce website. The project proved to be a challenging and multi-faceted task, that requires expertise in many different technologies, proper planning and possibly most importantly enough time. Overoptimization and perfectionism, especially at an early stage of the project, appeared to be one of the biggest pitfalls. These practices often hinder productivity in exchange of negligible gains.
+Reading this thesis provides the audience with a brief historical overview of the development of ecommerce, the different issues it brought along that people in the IT field need to solve, the importance of usability and UI/UX planning. Developers with a similar interest may find inspiration in this work and prepare for the potential challenges which have been detailed previously. A fairly typical deployment scheme has been outlined that can be used as a baseline to expand on.
+Despite the limited success of the actual implementation, the thesis calls for developers to be bold enough to start working on a project that involves a complex set of components, to gain new experience, widen their knowledge and improve their creativity.
+Future Work
+Currently, only the foundation of the ecommerce project has been laid down. Extension and improvements are necessary to achieve a production-ready website.
+The API needs a more refined permission scheme that supports ordinary users (customers) and admins. New endpoints could be created for resetting passwords using a one-time generated link (forgotten password), tracking orders, canceling orders, changing various personal details such as name, email address or shipping address, including the ability to change the default shipping address.
+In case of the frontend, a payment gateway could be added to enable users to immediately pay for their orders. An admin login page should also be created where users with admin permissions could be authenticated and subsequently gain access to admin functionalities such as deleting customers, adding new products, changing product images, etc.
+The deployment could be streamlined completely with the help of CI/CD pipeline (e.g., in GitHub Actions) for building artifacts, IaC such as Terraform for provisioning the infrastructure and bash scripts to configure the servers (or even using a configuration management tool such as Ansible).
  
 Bibliography
 
